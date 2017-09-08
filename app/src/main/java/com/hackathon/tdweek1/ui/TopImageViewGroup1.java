@@ -17,6 +17,8 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -27,6 +29,8 @@ import timber.log.Timber;
  */
 
 public class TopImageViewGroup1 extends RelativeLayout{
+
+    public static final String TAG = "TopImageViewGroup1";
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
@@ -41,7 +45,13 @@ public class TopImageViewGroup1 extends RelativeLayout{
         LayoutInflater.from(getContext()).inflate(R.layout.top_image_layout, this, true);
         ButterKnife.bind(this);
 
-        recyclerView.setAdapter(new RecyclerAdapter());
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(R.drawable.card_and_banner);
+        list.add(R.drawable.top_repeated_purchases);
+        list.add(R.drawable.weekly_spending_breakdown);
+
+
+        recyclerView.setAdapter(new RecyclerAdapter(getContext(), list, false));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
     }
 

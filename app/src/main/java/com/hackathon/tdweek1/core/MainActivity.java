@@ -5,7 +5,9 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorRes;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.PopupWindowCompat;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +28,8 @@ import com.hackathon.tdweek1.R;
 import com.hackathon.tdweek1.ui.RecyclerAdapter;
 import com.hackathon.tdweek1.ui.ViewPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.rievo.android.library.BackStackManager;
+import com.rievo.android.library.ClusterBackStack;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,8 +44,14 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String ROOT_BACKSTACK = "root_backstack";
+
     @BindView(R.id.top_panel) ViewPager topPanel;
     @BindView(R.id.viewpagertab) SmartTabLayout viewPagerTab;
+    @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
+
+    ActionBarDrawerToggle drawerToggle;
+    ClusterBackStack clusterBackStack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +67,37 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+        BackStackManager.install(this);
+        clusterBackStack = ClusterBackStack.create(ROOT_BACKSTACK, 0);
+        BackStackManager.setRootBackStack(clusterBackStack);
 
         ButterKnife.bind(this);
 
-        topPanel.setAdapter(new ViewPagerAdapter(this));
+        topPanel.setAdapter(new ViewPagerAdapter(this, clusterBackStack));
         viewPagerTab.setViewPager(topPanel);
+        topPanel.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                clusterBackStack.switchContext(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerToggle.syncState();
     }
 
     @Override
@@ -85,6 +118,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        BackStackManager.getBackStackManager().goBack();
+        getSupportActionBar().show();
+        setTitle(getResources().getString(R.string.app_name));
     }
 
     public static void tintMenuIcon(Context context, MenuItem item, @ColorRes int color) {

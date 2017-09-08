@@ -3,12 +3,15 @@ package com.hackathon.tdweek1.ui;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.hackathon.tdweek1.R;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +22,8 @@ import butterknife.OnClick;
  */
 
 public class TopImageViewGroup2 extends RelativeLayout {
+
+    public static final String TAG = "TopImageViewGroup2";
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -32,7 +37,12 @@ public class TopImageViewGroup2 extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.top_image_layout, this, true);
         ButterKnife.bind(this);
 
-        recyclerView.setAdapter(new RecyclerAdapter());
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(R.drawable.wallet_and_card_3);
+        list.add(R.drawable.account_balances);
+        list.add(R.drawable.weekly_spending_breakdown);
+
+        recyclerView.setAdapter(new RecyclerAdapter(getContext(), list, true));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
     }
 
